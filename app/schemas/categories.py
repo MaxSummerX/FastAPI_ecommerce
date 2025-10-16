@@ -19,7 +19,7 @@ class Category(BaseModel):
 
     id: int = Field(description="Уникальный идентификатор категории")
     name: str = Field(description="Название категории")
-    parent_id: int | None = Field(None, description="ID родительской категории, если есть")
     is_active: bool = Field(description="Активность категории")
+    parent_id: int | None = Field(None, description="ID родительской категории, если есть")
 
     model_config = ConfigDict(from_attributes=True)
