@@ -16,7 +16,7 @@ app.include_router(products.router)
 
 
 # Корневой эндпойнт для проверки
-@app.get("/")
+@app.get("/", tags=["root"])
 async def root() -> dict:
     """
     Корневой маршрут, подтверждающий, что API работает
