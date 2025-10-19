@@ -13,10 +13,10 @@ if TYPE_CHECKING:
 class Category(Base):
     __tablename__ = "categories"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     parent_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     # Создаём связь через products к category
     products: Mapped[list["Product"]] = relationship("Product", back_populates="category")

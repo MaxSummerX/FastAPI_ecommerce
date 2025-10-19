@@ -23,13 +23,13 @@ class Product(BaseModel):
     Используется в GET-запросах.
     """
 
-    id: int = Field(description="Уникальный идентификатор товар")
+    id: int = Field(description="Уникальный идентификатор товара")
     name: str = Field(description="Название товара")
     description: str | None = Field(None, description="Описание товара")
-    price: Decimal = Field(description="Цена товара в рублях", gt=0, decimal_places=0)
-    image_irl: str | None = Field(None, description="URL изображения товара")
+    price: Decimal = Field(description="Цена товара в рублях", gt=0, decimal_places=2)
+    image_url: str | None = Field(None, description="URL изображения товара")
     stock: int = Field(description="Количество товара на складе")
-    is_active: bool = Field(description="Активность товара")
     category_id: int = Field(description="ID категории")
+    is_active: bool = Field(description="Активность товара")
 
     model_config = ConfigDict(from_attributes=True)
