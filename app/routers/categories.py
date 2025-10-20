@@ -1,7 +1,7 @@
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.depends.db_depends import get_db
@@ -37,7 +37,7 @@ async def create_category(category: CategoryCreate, db: Session = Depends(get_db
         parent = db.scalars(stmt).first()
         #  Проверяем результат запроса
         if parent is None:
-            raise HTTPException(status_code=400, detail="Parent category not found")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Parent category not found")
 
     # Создание новой категории
     db_category = CategoryModel(**category.model_dump())
@@ -55,9 +55,20 @@ async def update_category(category_id: int) -> dict:
     return {"message": f"Категория с ID {category_id} обновлена (заглушка)"}
 
 
-@router.delete("/{category_id}")
-async def delete_category(category_id: int) -> dict:
+@router.delete("/{category_id}", status_code=status.HTTP_200_OK)
+async def delete_category(category_id: int, db: Session = Depends(get_db)) -> dict:
     """
-    Удаляет категорию по её ID.
+    Логически удаляет категорию по её ID, устанавливая is_active=False.
     """
-    return {"message": f"Категория с ID {category_id} удалена (заглушка)"}
+    # Проверка существования активной категории
+    stmt = select(CategoryModel).where(CategoryModel.id == category_id, CategoryModel.is_active is True)
+    category = db.scalars(stmt).first()
+    if category is None:
+        print(category)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found")
+
+    # Логическое удаление категории (Установка is_active=False)
+    db.execute(update(CategoryModel).where(CategoryModel.id == category_id).values(is_active=False))
+    db.commit()
+
+    return {"status": "success", "message": "Category marked as inactive"}
