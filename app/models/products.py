@@ -9,6 +9,7 @@ from app.database import Base
 
 if TYPE_CHECKING:
     from app.models.categories import Category
+    from app.models.users import User
 
 
 class Product(Base):
@@ -22,6 +23,8 @@ class Product(Base):
     stock: Mapped[int] = mapped_column(Integer, nullable=False)
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    seller_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
     # Создаём связь через category к products
     category: Mapped["Category"] = relationship("Category", back_populates="products")
+    seller: Mapped["User"] = relationship("User", back_populates="products")
