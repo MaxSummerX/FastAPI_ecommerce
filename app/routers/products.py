@@ -19,11 +19,7 @@ async def get_all_products(db: AsyncSession = Depends(get_async_db)) -> Any:
     """
     Возвращает список всех товаров.
     """
-    stmt = (
-        select(ProductModel)
-        .join(CategoryModel)
-        .where(ProductModel.is_active, CategoryModel.is_active, ProductModel.stock > 0)
-    )
+    stmt = select(ProductModel).join(CategoryModel).where(ProductModel.is_active, CategoryModel.is_active)
     result = await db.scalars(stmt)
     products = result.all()
 
@@ -118,8 +114,7 @@ async def update_product(product_id: int, product: ProductCreate, db: AsyncSessi
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Category not found")
 
     # Обновление товара
-    update_date = product.model_dump(exclude_unset=True)
-    await db.execute(update(ProductModel).where(ProductModel.id == product_id).values(**update_date))
+    await db.execute(update(ProductModel).where(ProductModel.id == product_id).values(**product.model_dump()))
     await db.commit()
     await db.refresh(db_product)
     return db_product
@@ -137,7 +132,7 @@ async def delete_product(product_id: int, db: AsyncSession = Depends(get_async_d
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
 
-    await db.execute(update(ProductModel).where(ProductModel.id == product_id).values(is_active=False))
+    product.is_active = False
     await db.commit()
 
     return product
