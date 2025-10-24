@@ -130,7 +130,7 @@ dependencies = []
 [tool.ruff]
 line-length = 120
 target-version = "py313"
-exclude = ["venv", ".venv", "alembic", "docker", ".git", "__pycache__"]
+exclude = ["venv", ".venv", "alembic", "docker", ".git", "__pycache__", "app/migrations/env.py"]
 
 [tool.ruff.lint]
 select = [
