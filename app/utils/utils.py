@@ -14,3 +14,7 @@ async def update_product_rating(db: AsyncSession, product_id: int) -> None:
     product = await db.get(ProductModel, product_id)
     product.rating = avg_rating
     await db.commit()
+
+
+def check_grade(grade: int) -> bool:
+    return 1 <= grade <= 5
