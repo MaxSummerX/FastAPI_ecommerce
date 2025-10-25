@@ -58,7 +58,7 @@ async def create_review(
     return db_review
 
 
-@router.delete("/{review_id}", response_model=ReviewSchema, status_code=status.HTTP_200_OK)
+@router.delete("/{review_id}", status_code=status.HTTP_200_OK)
 async def delete_review(
     review_id: int, db: AsyncSession = Depends(get_async_db), current_user: UserModel = Depends(get_current_user)
 ) -> dict:

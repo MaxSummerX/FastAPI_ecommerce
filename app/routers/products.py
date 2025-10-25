@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select, update
@@ -54,7 +54,7 @@ async def create_product(
 
 
 @router.get("/{product_id}/reviews", response_model=list[ReviewSchema], status_code=status.HTTP_200_OK)
-async def get_product_review(product_id: int, db: AsyncSession = Depends(get_async_db)) -> Any:
+async def get_product_review(product_id: int, db: AsyncSession = Depends(get_async_db)) -> list[ReviewSchema]:
     """
     Возвращает список отзывов по ID товара.
     """
@@ -68,9 +68,8 @@ async def get_product_review(product_id: int, db: AsyncSession = Depends(get_asy
     result_review = await db.scalars(
         select(ReviewModel).where(ReviewModel.product_id == product_id, ReviewModel.is_active.is_(True))
     )
-    db_review = result_review.all()
 
-    return db_review
+    return cast(list[ReviewModel], result_review.all())
 
 
 @router.get("/category/{category_id}", response_model=list[ProductSchema], status_code=status.HTTP_200_OK)
