@@ -8,9 +8,11 @@ from app.auth import get_current_seller
 from app.depends.db_depends import get_async_db
 from app.models.categories import Category as CategoryModel
 from app.models.products import Product as ProductModel
+from app.models.reviews import Review as ReviewModel
 from app.models.users import User as UserModel
 from app.schemas.products import Product as ProductSchema
 from app.schemas.products import ProductCreate
+from app.schemas.reviews import Review as ReviewSchema
 
 
 router = APIRouter(prefix="/products", tags=["products"])
@@ -51,6 +53,26 @@ async def create_product(
     return db_product
 
 
+@router.get("/{product_id}/reviews", response_model=list[ReviewSchema], status_code=status.HTTP_200_OK)
+async def get_product_review(product_id: int, db: AsyncSession = Depends(get_async_db)) -> Any:
+    """
+    Возвращает список отзывов по ID товара.
+    """
+    result_product = await db.scalars(
+        select(ProductModel).where(ProductModel.id == product_id, ProductModel.is_active.is_(True))
+    )
+    db_product = result_product.first()
+    if not db_product:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found or inactive")
+
+    result_review = await db.scalars(
+        select(ReviewModel).where(ReviewModel.product_id == product_id, ReviewModel.is_active.is_(True))
+    )
+    db_review = result_review.all()
+
+    return db_review
+
+
 @router.get("/category/{category_id}", response_model=list[ProductSchema], status_code=status.HTTP_200_OK)
 async def get_product_by_category(category_id: int, db: AsyncSession = Depends(get_async_db)) -> Any:
     """
@@ -84,7 +106,7 @@ async def get_product(product_id: int, db: AsyncSession = Depends(get_async_db))
 
     # Выводи ошибку если товара нет
     if not product:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found or inactive")
 
     # Проверяем, существует ли активная категория
     stmt_category = select(CategoryModel).where(CategoryModel.id == product.category_id, CategoryModel.is_active)
