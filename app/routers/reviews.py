@@ -61,7 +61,7 @@ async def create_review(
 @router.delete("/{review_id}", response_model=ReviewSchema, status_code=status.HTTP_200_OK)
 async def delete_review(
     review_id: int, db: AsyncSession = Depends(get_async_db), current_user: UserModel = Depends(get_current_user)
-) -> ReviewModel:
+) -> dict:
     """
     Выполняет мягкое удаление отзыва (только для 'admin').
     """
@@ -70,15 +70,15 @@ async def delete_review(
     )
     db_review = result_review.first()
 
-    if not db_review:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Review not found or inactive")
-
     if current_user.role != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admin can perform this action")
+
+    if not db_review:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Review not found or inactive")
 
     db_review.is_active = False
 
     await db.commit()
     await update_product_rating(db, db_review.product_id)
 
-    return cast(ReviewModel, db_review)
+    return {"message": "Review deleted"}

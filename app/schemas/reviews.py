@@ -17,7 +17,7 @@ class ReviewCreate(BaseModel):
 class Review(BaseModel):
     """
     Модель для ответа с данными Отзыва.
-    Используется в GET-запросах.
+    Используется в GET запросах.
     """
 
     id: int = Field(description="Уникальный идентификатор отзыва")
