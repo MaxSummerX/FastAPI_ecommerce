@@ -1,11 +1,7 @@
 from fastapi import FastAPI
 
-from app.database import Base, engine
 from app.routers import categories, products, reviews, users
 
-
-# Создаём таблицы
-Base.metadata.create_all(engine)
 
 # Создаём приложение FastAPI
 app = FastAPI(title="FastAPI интернет-магазин", version="0.1.0")
