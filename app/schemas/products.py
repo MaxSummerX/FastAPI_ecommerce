@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 
 class ProductCreate(BaseModel):
@@ -15,6 +15,11 @@ class ProductCreate(BaseModel):
     image_url: str | None = Field(None, max_length=200, description="URL изображения товара")
     stock: int = Field(ge=0, description="Количество товара на складе (0 или больше)")
     category_id: int = Field(description="ID категория, к которой относится товар")
+
+    @field_serializer("price")
+    def serialize_price(self, value: Decimal) -> float:
+        """Конвертирует Decimal в float для JSON"""
+        return round(float(value), 2)
 
 
 class Product(BaseModel):
@@ -32,5 +37,12 @@ class Product(BaseModel):
     category_id: int = Field(description="ID категории")
     rating: float = Field(description="Рейтинг товара")
     is_active: bool = Field(description="Активность товара")
+
+    @field_serializer("price")
+    def serialize_decimals(self, value: Decimal | None) -> float | None:
+        """Конвертирует Decimal в float для JSON"""
+        if value is None:
+            return None
+        return round(float(value), 2)
 
     model_config = ConfigDict(from_attributes=True)
