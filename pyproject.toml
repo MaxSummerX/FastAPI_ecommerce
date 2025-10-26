@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "FastAPI_ecommerce"
 version = "0.1.0"
 description = "FastAPI ecommerce Учебный проект"
-authors = [{ name = "your_name", email = "your_email@example.com" }]
+authors = [{ name = "MaxSummerX", email = "your_email@example.com" }]
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
 dependencies = [
