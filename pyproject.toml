@@ -27,6 +27,9 @@ dependencies = [
     "flower>=2.0.1",
 ]
 
+[tool.setuptools]
+packages = ["app"]
+
 [project.optional-dependencies]
 dev = [
     "pytest>=8.4.2",
