@@ -8,7 +8,7 @@ from sqlalchemy.orm import DeclarativeBase
 load_dotenv()
 
 # Строка подключения для PostgreSQl
-DATABASE_URL = os.environ["POSTGRESQL"]
+DATABASE_URL = os.getenv("POSTGRESQL")
 
 # Создаём engine
 async_engine = create_async_engine(DATABASE_URL, echo=True)
