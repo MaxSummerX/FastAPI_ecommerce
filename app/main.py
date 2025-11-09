@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.log import log_middleware
-from app.routers import categories, products, reviews, users
+from app.routers import carts, categories, products, reviews, users
 
 
 # from app.tasks.task import call_background_task
@@ -17,6 +17,7 @@ app.include_router(categories.router)
 app.include_router(products.router)
 app.include_router(users.router)
 app.include_router(reviews.router)
+app.include_router(carts.router)
 
 
 # Корневой эндпойнт для проверки
