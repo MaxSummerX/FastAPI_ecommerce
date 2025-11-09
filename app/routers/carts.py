@@ -82,17 +82,20 @@ async def add_item_to_cart(
     """
     await _ensure_product_available(db, payload.product_id)
 
-    cart_item = await get_cart(db, current_user.id, payload.product_id)
-
+    cart_item = await _get_cart_item(db, current_user.id, payload.product_id)
     if cart_item:
         cart_item.quantity += payload.quantity
     else:
-        cart_item = CartItemModel(user_id=current_user.id, product_id=payload.product_id, quantity=payload.quantity)
+        cart_item = CartItemModel(
+            user_id=current_user.id,
+            product_id=payload.product_id,
+            quantity=payload.quantity,
+        )
         db.add(cart_item)
 
     await db.commit()
-    update_item = await _get_cart_item(db, current_user.id, payload.product_id)
-    return cast(CartItemModel, update_item)
+    updated_item = await _get_cart_item(db, current_user.id, payload.product_id)
+    return cast(CartItemModel, updated_item)
 
 
 @router.put("/items/{product_id}", response_model=CartItemSchema, status_code=status.HTTP_200_OK)
