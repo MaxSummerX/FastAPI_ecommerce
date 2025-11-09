@@ -46,3 +46,16 @@ class Product(BaseModel):
         return round(float(value), 2)
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ProductList(BaseModel):
+    """
+    Список пагинации для товаров.
+    """
+
+    items: list[Product] = Field(description="Товары для текущей страницы")
+    total: int = Field(ge=0, description="Общее кол-во товаров")
+    page: int = Field(ge=1, description="Номер текущей страницы")
+    page_size: int = Field(ge=1, description="Кол-во элементов на старницы")
+
+    model_config = ConfigDict(from_attributes=True)
