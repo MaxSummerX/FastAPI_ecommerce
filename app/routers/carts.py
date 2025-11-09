@@ -141,6 +141,7 @@ async def clear_cart(
     db: AsyncSession = Depends(get_async_db),
     current_user: UserModel = Depends(get_current_user),
 ) -> Response:
+    """Полная очистка корзины"""
     await db.execute(delete(CartItemModel).where(CartItemModel.user_id == current_user.id))
     await db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
