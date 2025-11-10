@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 from app.schemas.products import Product
 
@@ -40,6 +40,11 @@ class Cart(BaseModel):
     user_id: int = Field(..., description="ID пользователя")
     items: list[CartItem] = Field(default_factory=list, description="Содержимое корзины")
     total_quantity: int = Field(..., ge=0, description="Общее кол-во товара")
-    total_price: Decimal = Field(..., ge=0, description="Общая стоимость товара")
+    total_price: Decimal = Field(..., ge=0, description="Общая стоимость товара", decimal_places=2)
+
+    @field_serializer("total_price")
+    def serialize_price(self, value: Decimal) -> float:
+        """Конвертирует Decimal в float для JSON"""
+        return round(float(value), 2)
 
     model_config = ConfigDict(from_attributes=True)
